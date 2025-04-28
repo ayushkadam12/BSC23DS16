@@ -83,21 +83,31 @@ for idx, block in enumerate(st.session_state.blockchain.chain):
         st.code(f"Previous Hash: {block.previous_hash}")
         st.code(f"Current Hash: {block.hash}")
 
-# Tampering simulation (optional)
+# Tampering simulation (only if enough blocks)
 st.divider()
 st.subheader("🛠️ Tamper with a Block (Simulation)")
 
-tamper_index = st.number_input("Select block index to tamper:", min_value=1, max_value=len(st.session_state.blockchain.chain)-1, step=1, format="%d")
-tamper_data = st.text_input("New Event Data (fake tampering):")
-if st.button("Tamper Block"):
-    if tamper_data:
-        # Tampering by changing the event
-        block_to_tamper = st.session_state.blockchain.chain[tamper_index]
-        block_to_tamper.event = tamper_data
-        block_to_tamper.hash = block_to_tamper.calculate_hash()
-        st.error("⚠️ Block tampered! Blockchain may be invalid now!")
-    else:
-        st.warning("Please enter new tampering data.")
+if len(st.session_state.blockchain.chain) > 1:
+    tamper_index = st.number_input(
+        "Select block index to tamper:",
+        min_value=1,
+        max_value=len(st.session_state.blockchain.chain) - 1,
+        step=1,
+        format="%d"
+    )
+    tamper_data = st.text_input("New Event Data (fake tampering):")
+    if st.button("Tamper Block"):
+        if tamper_data:
+            # Tampering by changing the event
+            block_to_tamper = st.session_state.blockchain.chain[tamper_index]
+            block_to_tamper.event = tamper_data
+            block_to_tamper.hash = block_to_tamper.calculate_hash()
+            st.error("⚠️ Block tampered! Blockchain may be invalid now!")
+        else:
+            st.warning("Please enter new tampering data.")
+else:
+    st.info("ℹ️ Add at least one parcel event before trying to tamper with the blockchain.")
+
 
 # Blockchain validity check
 st.divider()
